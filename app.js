@@ -56,6 +56,38 @@ bars
                 yearData = birthData.filter(d => d.year === year);
                 xScale.domain([0, d3.max(yearData, d => d.births)]);
                 histogram.domain(xScale.domain())
+                        .thresholds(xScale.ticks());
+                bins = histogram(yearData);
+                yScale.domain([0, d3.max(bins, d => d.length)]);
 
+                bars = d3.select("svg")
+                        .selectAll(".bar")
+                        .data(bins);
+                bars
+                    .exit()
+                    .remove();
 
-            })
+                var g = bars    
+                            .enter()
+                            .append("g")
+                                .classed("bar", true);
+                g.append("rect");
+                g.append("text");
+
+                g.merge(bars)
+                    .select("rect")
+                        .attr("x", (d, i) => xScale(d.x0))
+                        .attr("y", d => yScale(d.length))
+                        .attr("height", d => height - yScale(d.length))
+                        .attr("width", d => xScale(d.x1) - xScale(d.x0) - barPadding)
+                        .attr("fill", "#9c27b0");
+
+                g.merge(bars)
+                    .select("text")
+                        .text(d => d.x0 + " - " + d.x1 + " (bar height: " + d.length + ")")
+                        .attr("y", d => (xScale(d.x1) + xScale(d.x0)) / 2)
+                        .attr("transform", "rotate(-90)")
+                        .attr("x", -height + 10)
+                        .style("alignement-baseline", "middle");
+
+            });
