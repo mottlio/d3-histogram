@@ -1,7 +1,7 @@
 var width = 600;
 var height = 600;
 var barPadding = 1;
-
+var maxYear = d3.max(birthData, d => d.year);
 var minYear = d3.min(birthData, d => d.year);
 var yearData = birthData.filter(d => d.year === minYear);
 
@@ -16,7 +16,7 @@ var histogram = d3.histogram()
 
 var bins = histogram(yearData);
 
-var barWidth = width / bins.length - barPadding;
+//var barWidth = width / bins.length - barPadding;
 
 var yScale = d3.scaleLinear()
                 .domain([0, d3.max(bins, d => d.length)])
@@ -46,3 +46,16 @@ bars
       .attr("transform", "rotate(-90)")
       .attr("x", -height + 10)
       .style("alignement-baseline", "middle");
+
+      d3.select("input")
+            .property("min", minYear)
+            .property("max", maxYear)
+            .property("value", minYear)
+            .on("inout", function(){
+                var year = +d3.event.target.value;
+                yearData = birthData.filter(d => d.year === year);
+                xScale.domain([0, d3.max(yearData, d => d.births)]);
+                histogram.domain(xScale.domain())
+
+
+            })
