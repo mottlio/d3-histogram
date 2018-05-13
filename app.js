@@ -7,9 +7,11 @@ var yearData = birthData.filter(d => d.year === minYear);
 
 var xScale = d3.scaleLinear()
                 .domain([0, d3.max(yearData, d => d.births)])
-                .range([0, width])
+                .rangeRound([0, width])
 
 var histogram = d3.histogram()
+                    .domain(xScale.domain())
+                    .thresholds(xScale.ticks())
                     .value(d => d.births);
 
 var bins = histogram(yearData);
@@ -34,5 +36,5 @@ bars
       .attr("x", (d, i) => xScale(d.x0))
       .attr("y", d => yScale(d.length))
       .attr("height", d => height - yScale(d.length))
-      .attr("width", barWidth)
+      .attr("width", d => xScale(d.x1) - xScale(d.x0) - barPadding)
       .attr("fill", "#9c27b0");
