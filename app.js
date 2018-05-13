@@ -38,3 +38,11 @@ bars
       .attr("height", d => height - yScale(d.length))
       .attr("width", d => xScale(d.x1) - xScale(d.x0) - barPadding)
       .attr("fill", "#9c27b0");
+
+bars
+    .append("text")
+      .text(d => d.x0 + " - " + d.x1 + " (bar height: " + d.length + ")")
+      .attr("y", d => (xScale(d.x1) + xScale(d.x0)) / 2)
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height + 10)
+      .style("alignement-baseline", "middle");
